@@ -20,6 +20,8 @@ footer {
     color: #494949;
     font-family: 'Montserrat Medium', sans-serif;
     font-size: 15px;
+    align-self: end;
+    align-items: end;
     line-height: 1.5;
 }
 
@@ -71,11 +73,9 @@ button {
     background-color: #be1f24;
     color: #ffffff;
     font-family: 'Montserrat SemiBold', sans-serif;
-    border: none;
     border-radius: 7px;
     padding: 10px 20px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .nav {
