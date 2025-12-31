@@ -15,8 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const payload = {
       nom: formData.get('nom') || null,
       prenom: formData.get('prenom') || null,
-      email: formData.get('email') || null,
-      telephone: formData.get('telephone') || null
+      discord: formData.get('discord') || null,
+      telephone: formData.get('telephone') || null,
+      entreprise: formData.get('entreprise') || null
     }
 
     const { data, error } = await supabase
