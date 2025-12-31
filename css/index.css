@@ -14,6 +14,15 @@ h1 {
     transform: none;
 }
 
+footer {
+    margin-top : 40px;
+    text-align: center;
+    color: #494949;
+    font-family: 'Montserrat Medium', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
 h2 {
     color: #ffffff;
     font-family: 'Montserrat SemiBold', sans-serif;
@@ -116,4 +125,22 @@ header {
     opacity: 0.9;
     font-size: 0.9rem;
     font-weight: 500;
+}
+
+p {
+    color: #c0c0c0;
+    font-family: 'Montserrat Regular', sans-serif;
+    /* line-height: 1.5; */
+}
+
+button {
+    margin-top : 20px;
+    background-color: #be1f24;
+    color: #ffffff;
+    font-family: 'Montserrat SemiBold', sans-serif;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
