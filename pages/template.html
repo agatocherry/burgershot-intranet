@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burger Shot - Commande</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .panier {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            min-height: 100px;
+        }
+
+        .panier h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .panier-vide {
+            color: #adb5bd;
+            text-align: center;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .article-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .article-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .article-nom {
+            font-weight: bold;
+            color: #495057;
+            min-width: 120px;
+        }
+
+        .article-prix {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .quantite-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1em;
+        }
+
+        .btn-supprimer {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .btn-supprimer:hover {
+            background: #c82333;
+        }
+
+        .selection {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #495057;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            background: white;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .total {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .btn-commander {
+            width: 100%;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .btn-commander:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍔 Burger Shot</h1>
+        
+        <div class="panier" id="panier">
+            <h3>Votre commande :</h3>
+            <div class="panier-vide" id="panier-vide">Aucun article sélectionné</div>
+            <div id="liste-panier"></div>
+        </div>
+
+        <div class="selection">
+            <label for="liste-articles">Ajouter un article :</label>
+            <select id="liste-articles">
+                <option value="">-- Choisir un article --</option>
+                <option value="burger" data-prix="5">Burger - 5€</option>
+                <option value="cheeseburger" data-prix="6">Cheeseburger - 6€</option>
+                <option value="frites" data-prix="3">Frites - 3€</option>
+                <option value="nuggets" data-prix="4">Nuggets - 4€</option>
+                <option value="coca" data-prix="2">Coca - 2€</option>
+                <option value="sprite" data-prix="2">Sprite - 2€</option>
+                <option value="milkshake" data-prix="4">Milkshake - 4€</option>
+            </select>
+        </div>
+
+        <div class="total" id="total">Total : 0€</div>
+
+        <button class="btn-commander" onclick="validerCommande()">Valider la commande</button>
+    </div>
+
+    <script>
+        // Stockage des articles du panier
+        let panier = {};
+
+        // Écouter le changement dans le select
+        document.getElementById('liste-articles').addEventListener('change', function() {
+            const select = this;
+            const articleId = select.value;
+            
+            if (articleId === '') return;
+            
+            const option = select.options[select.selectedIndex];
+            const articleNom = option.text.split(' - ')[0];
+            const articlePrix = parseFloat(option.dataset.prix);
+            
+            // Ajouter ou augmenter la quantité
+            if (panier[articleId]) {
+                panier[articleId].quantite++;
+            } else {
+                panier[articleId] = {
+                    nom: articleNom,
+                    prix: articlePrix,
+                    quantite: 1
+                };
+            }
+            
+            // Réinitialiser le select
+            select.value = '';
+            
+            // Mettre à jour l'affichage
+            afficherPanier();
+        });
+
+        function afficherPanier() {
+            const listePanier = document.getElementById('liste-panier');
+            const panierVide = document.getElementById('panier-vide');
+            
+            // Vider l'affichage
+            listePanier.innerHTML = '';
+            
+            // Si le panier est vide
+            if (Object.keys(panier).length === 0) {
+                panierVide.style.display = 'block';
+                calculerTotal();
+                return;
+            }
+            
+            panierVide.style.display = 'none';
+            
+            // Afficher chaque article
+            for (let id in panier) {
+                const article = panier[id];
+                
+                const div = document.createElement('div');
+                div.className = 'article-item';
+                div.innerHTML = `
+                    <div class="article-info">
+                        <span class="article-nom">${article.nom}</span>
+                        <span class="article-prix">${article.prix}€</span>
+                    </div>
+                    <div class="quantite-control">
+                        <input type="number" value="${article.quantite}" min="1" 
+                               onchange="modifierQuantite('${id}', this.value)">
+                        <button class="btn-supprimer" onclick="supprimerArticle('${id}')">❌</button>
+                    </div>
+                `;
+                
+                listePanier.appendChild(div);
+            }
+            
+            calculerTotal();
+        }
+
+        function modifierQuantite(articleId, nouvelleQte) {
+            nouvelleQte = parseInt(nouvelleQte);
+            if (nouvelleQte < 1) nouvelleQte = 1;
+            
+            panier[articleId].quantite = nouvelleQte;
+            afficherPanier();
+        }
+
+        function supprimerArticle(articleId) {
+            delete panier[articleId];
+            afficherPanier();
+        }
+
+        function calculerTotal() {
+            let total = 0;
+            
+            for (let id in panier) {
+                total += panier[id].prix * panier[id].quantite;
+            }
+            
+            document.getElementById('total').textContent = `Total : ${total.toFixed(2)}€`;
+        }
+
+        function validerCommande() {
+            if (Object.keys(panier).length === 0) {
+                alert('Votre panier est vide !');
+                return;
+            }
+            
+            let recapitulatif = 'Récapitulatif de votre commande :\n\n';
+            
+            for (let id in panier) {
+                const article = panier[id];
+                recapitulatif += `${article.nom} x${article.quantite} = ${(article.prix * article.quantite).toFixed(2)}€\n`;
+            }
+            
+            let total = 0;
+            for (let id in panier) {
+                total += panier[id].prix * panier[id].quantite;
+            }
+            
+            recapitulatif += `\nTotal : ${total.toFixed(2)}€`;
+            
+            alert(recapitulatif);
+            
+            // Réinitialiser le panier
+            panier = {};
+            afficherPanier();
+        }
+    </script>
+</body>
+</html>
